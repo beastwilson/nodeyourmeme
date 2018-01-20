@@ -1,6 +1,6 @@
 {
   "name": "nodeyourmeme",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Know your meme search API for node.js!",
   "main": "index.js",
   "scripts": {
