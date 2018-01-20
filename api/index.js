@@ -101,7 +101,7 @@ function parseMemeBody(body) {
 /**
  * Search for a given term.
  * @param term {string} - The search term for which to search on.
- * @returns {Promise.<void>}
+ * @returns {Promise.<string>} - A promise which resolves to the value of the "about" section
  */
 async function doSearch(term) {
     let resultUrl;
@@ -121,6 +121,10 @@ async function doSearch(term) {
     return parseMemeBody(body);
 }
 
+/**
+ * Get a random meme.
+ * @returns {Promise.<string>} - A promise which resolves to the value of the "about" section
+ */
 async function doRandomSearch() {
     let body;
     try {
