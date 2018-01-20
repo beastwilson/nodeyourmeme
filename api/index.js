@@ -40,7 +40,7 @@ async function findFirstSearchResult(term) {
         throw e;
     }
 
-    if (body.toString().contains('Sorry, but there were no results for')) {
+    if (body.includes('Sorry, but there were no results for')) {
         throw new Error('No results found.');
     }
 
