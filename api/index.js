@@ -90,7 +90,7 @@ function parseMemeBody(body) {
 
     const paragraphs = about.find('p');
 
-    if (paragraphs && paragraphs[0]) {
+    if (paragraphs && paragraphs.length !== 0) {
         const text = childrenToText(paragraphs);
 
         if (text && text.trim() !== '') {
