@@ -125,15 +125,25 @@ async function doSearch(term) {
  * Get a random meme.
  * @returns {Promise.<string>} - A promise which resolves to the value of the "about" section
  */
-async function doRandomSearch() {
+async function doRandomSearch(tries = 3) {
     let body;
     try {
         body = await makeRequest(config.BASE_URL + config.RANDOM_URL);
     } catch (e) {
+        if (tries > 0) {
+            return doRandomSearch(--tries);
+        }
+
         throw e;
     }
 
-    return parseMemeBody(body);
+    const parsed = parseMemeBody(body);
+
+    if (!parsed && tries > 0) {
+        return doRandomSearch(--tries);
+    }
+
+    return parsed;
 }
 
 module.exports = { search: doSearch, random: doRandomSearch };
