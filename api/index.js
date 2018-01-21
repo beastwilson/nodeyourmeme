@@ -55,7 +55,9 @@ async function findFirstSearchResult(term) {
 function childrenToText(children) {
     let text = '';
 
-    for (const child of children) {
+    for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+
         if (child.type === 'text') {
             if (!/^\s*\[\d+]\s*$/.test(child.data))
             {
@@ -89,7 +91,8 @@ function parseMemeBody(body) {
     const paragraphs = about.find('p');
 
     if (paragraphs && paragraphs[0]) {
-        const text = childrenToText(paragraphs[0]);
+        const text = childrenToText(paragraphs);
+
         if (text && text.trim() !== '') {
             return text;
         }
