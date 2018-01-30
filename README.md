@@ -13,7 +13,7 @@ nodeyourmeme.random().then(console.log).catch(console.error);
 
 ## Methods:
 
-The following methods return a "meme promise", which is a promise that resolves to a string containing the information inside the "about" section.
+The following methods return a "meme promise", which is a promise that resolves to an object with the properties `name` (the name of the meme) and `about` (the text from the "about" section of the meme, both strings.
 
 `search(term)` - Takes a string input for the search term
 

@@ -76,6 +76,7 @@ function childrenToText(children) {
 function parseMemeBody(body) {
     const $ = cheerio.load(body);
 
+    const name = $('.info h1 a')[0].children[0].data;
     const about = $('.bodycopy');
 
     const children = about.children();
@@ -84,7 +85,7 @@ function parseMemeBody(body) {
         const child = children[i];
 
         if (child.attribs.id === 'about') {
-            return childrenToText(children[i + 1].children);
+            return {  name, about: childrenToText(children[i + 1].children) };
         }
     }
 
@@ -94,7 +95,7 @@ function parseMemeBody(body) {
         const text = childrenToText(paragraphs);
 
         if (text && text.trim() !== '') {
-            return text;
+            return { name, about: text };
         }
     }
 
@@ -104,7 +105,7 @@ function parseMemeBody(body) {
 /**
  * Search for a given term.
  * @param term {string} - The search term for which to search on.
- * @returns {Promise.<string>} - A promise which resolves to the value of the "about" section
+ * @returns {Promise.<object>} - A promise which resolves to a meme object
  */
 async function doSearch(term) {
     let resultUrl;
@@ -126,7 +127,7 @@ async function doSearch(term) {
 
 /**
  * Get a random meme.
- * @returns {Promise.<string>} - A promise which resolves to the value of the "about" section
+ * @returns {Promise.<object>} - A promise which resolves to a meme object
  */
 async function doRandomSearch(tries = 3) {
     let body;
