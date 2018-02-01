@@ -10,25 +10,25 @@ function getSearchURL(term) {
 function makeRequest(url) {
     return new Promise((resolve, reject) => {
         request({
-                    uri: url,
-                    headers: {
-                        'User-Agent': config.USER_AGENT
-}
-}, (err, res, body) => {
-        if (err != null) {
-            reject((typeof err !== 'object') ? new Error(err) : err);
-            return;
-        }
+            uri: url,
+            headers: {
+                'User-Agent': config.USER_AGENT
+            }
+        }, (err, res, body) => {
+            if (err != null) {
+                reject((typeof err !== 'object') ? new Error(err) : err);
+                return;
+            }
 
-        // if the request was not a success for some reason
-        if (res.statusCode.toString()[0] !== '2') {
-            reject(new Error('Status Code ' + res.statusCode));
-            return;
-        }
+            // if the request was not a success for some reason
+            if (res.statusCode.toString()[0] !== '2') {
+                reject(new Error('Status Code ' + res.statusCode));
+                return;
+            }
 
-        resolve(body);
-    });
-})
+            resolve(body);
+        });
+    })
 }
 
 async function findFirstSearchResult(term) {
@@ -73,11 +73,12 @@ function childrenToText(children) {
     return text;
 }
 
-function parseMemeBody(body) {
+function parseMemeBody(body, url) {
     const $ = cheerio.load(body);
 
     const name = $('.info h1 a')[0].children[0].data;
     const about = $('.bodycopy');
+    const image = $('#maru > article > header > a > img')[0].attribs['data-src'];
 
     const children = about.children();
 
@@ -85,7 +86,7 @@ function parseMemeBody(body) {
         const child = children[i];
 
         if (child.attribs.id === 'about') {
-            return {  name, about: childrenToText(children[i + 1].children) };
+            return {  name, about: childrenToText(children[i + 1].children), url: url, image: image};
         }
     }
 
@@ -95,7 +96,7 @@ function parseMemeBody(body) {
         const text = childrenToText(paragraphs);
 
         if (text && text.trim() !== '') {
-            return { name, about: text };
+            return { name, about: text, url: url, image: image};
         }
     }
 
@@ -122,7 +123,7 @@ async function doSearch(term) {
         throw e;
     }
 
-    return parseMemeBody(body);
+    return parseMemeBody(body, resultUrl);
 }
 
 /**
@@ -131,8 +132,9 @@ async function doSearch(term) {
  */
 async function doRandomSearch(tries = 3) {
     let body;
+    let url = config.BASE_URL + config.RANDOM_URL;
     try {
-        body = await makeRequest(config.BASE_URL + config.RANDOM_URL);
+        body = await makeRequest(url);
     } catch (e) {
         if (tries > 0) {
             return doRandomSearch(--tries);
@@ -141,7 +143,7 @@ async function doRandomSearch(tries = 3) {
         throw e;
     }
 
-    const parsed = parseMemeBody(body);
+    const parsed = parseMemeBody(body, url);
 
     if (!parsed && tries > 0) {
         return doRandomSearch(--tries);
